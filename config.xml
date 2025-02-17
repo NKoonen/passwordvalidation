@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>passwordvalidation</name>
+	<displayName><![CDATA[Password Validation]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[To avoid customer from mistyping their password, this module requires customers to type their password twice.]]></description>
+	<author><![CDATA[Inform-All]]></author>
+	<tab><![CDATA[checkout]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+</module>
