@@ -32,7 +32,7 @@ class PasswordValidation extends Module
         if ( parent::install() == false
              or ! $this->registerHook( 'additionalCustomerFormFields' )
              or ! $this->registerHook( 'validateCustomerFormFields' )
-             or ! $this->registerHook( 'actionCustomerAccountAdd' ) ) {
+        ) {
             return false;
         }
 
