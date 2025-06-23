@@ -10,7 +10,7 @@ class PasswordValidation extends Module
     {
         $this->name          = 'passwordvalidation';
         $this->tab           = 'checkout';
-        $this->version       = '1.0.0';
+        $this->version       = '1.0.1';
         $this->author        = 'Inform-All';
         $this->need_instance = 0;
         $this->bootstrap     = true;
@@ -32,6 +32,7 @@ class PasswordValidation extends Module
         if ( parent::install() == false
              or ! $this->registerHook( 'additionalCustomerFormFields' )
              or ! $this->registerHook( 'validateCustomerFormFields' )
+             or ! $this->registerHook( 'actionSubmitAccountBefore' )
         ) {
             return false;
         }
@@ -53,11 +54,12 @@ class PasswordValidation extends Module
      */
     public function hookAdditionalCustomerFormFields( $params )
     {
-        if ( Tools::getValue( 'controller' ) === "authentication" ) {
+        $controller = Tools::getValue( 'controller' );
+        if ($controller  === "authentication" OR  $controller  === "registration" OR  $controller  === "order") {
 
             $password_conf_field['password_conf'] = ( new FormField )->setName( 'password_conf' )->setLabel(
                     $this->l( 'Password Confirmation' )
-                )->setType( 'password' )->setValue( Tools::getValue( 'password_conf' ) )->setRequired( true );
+                )->setType( 'password' )->setValue( Tools::getValue( 'password_conf' ) )->setRequired( $controller  === "order" ? false : true );
 
             return $password_conf_field;
         }
@@ -94,6 +96,20 @@ class PasswordValidation extends Module
         return [
             $module_fields,
         ];
+    }
+
+    public function hookActionSubmitAccountBefore($params)
+    {
+        $password = Tools::getValue('password');
+        $passwordConf = Tools::getValue('password_conf');
+
+        if (!empty($password)) {
+            if (empty($passwordConf)) {
+                $this->context->controller->errors[] = $this->l('Please confirm your password.');
+            } elseif ($password !== $passwordConf) {
+                $this->context->controller->errors[] = $this->l('Password confirmation does not match.');
+            }
+        }
     }
 
     public function getContent()
